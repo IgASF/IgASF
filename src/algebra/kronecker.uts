@@ -1,0 +1,61 @@
+/** This file is part of the IgASF library.
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+#include <iostream>
+
+#include <algebra/eigen.h>
+#include <algebra/kronecker.hpp>
+#include <catch.hpp>
+
+const real_t tol=100*std::numeric_limits<real_t>::epsilon();
+
+SCENARIO( "Testing applyRight", "[kronecker]" ) {
+
+    GIVEN( "Two views with the coefficients and a vector" ) {
+        std::vector<real_t> m1coefs{0,1,2,3,5,7};
+        std::vector<real_t> m2coefs{1,2,3,4};
+        std::vector<real_t> v_coefs{1,2,3,4,5,6};
+
+        view<real_t> m1(m1coefs);
+        view<real_t> m2(m2coefs);
+        view<real_t> v(v_coefs);
+        
+        WHEN( "computing m1 x m2" ) {
+            std::vector<real_t> m3coefs(6);
+            view<real_t> m3(m3coefs);
+            applyRight(3, m1, m3, m2.matrix(2,2) );
+
+            THEN( "the result is m1*m2 with tolerance 10^2 eps" ) {
+                REQUIRE( (m1.matrix(3,2)*m2.matrix(2,2) -m3.matrix(3,2) ).norm() < tol);
+            }
+        }
+        
+        WHEN( "applying m1 and m2 to v" )
+        {
+            const FMatrix K = Eigen::kroneckerProduct(m1.matrix(3,2),m2.matrix(2,2)).eval();
+            const FMatrix R = v.vector().transpose()*K;
+            
+            std::vector<real_t> rcoef(4);
+            std::vector<real_t> rcoef2(4);
+            view<real_t> r(rcoef);
+            view<real_t> r2(rcoef2);
+
+            std::vector<decltype(m2.matrix(2,2))> ops_vec({m1.matrix(3,2),m2.matrix(2,2)});
+            view<const decltype(m2.matrix(2,2))> ops(ops_vec);
+            
+            THEN("the result is v* (m1 K m2) with tolerance 10^2 eps")
+            {
+                applyRight(1,v,r,m2.matrix(2,2),m1.matrix(3,2) );
+                applyRight(1,v,r2, ops);
+
+                REQUIRE( (r.vector().transpose()-R).norm()< tol );
+                REQUIRE( (r2.vector().transpose()-R).norm()< tol );
+            }
+        }
+        
+    }
+}

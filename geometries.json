@@ -1,0 +1,126 @@
+{
+    "TwoSquares" :
+    {
+        "type":"BasisCoefficientMap",
+        "basis":
+        {
+        "type":"TensorBasis",
+        "components":[
+            {"degree":1,"knots":[0,0,1,2,2], "type":"Bspline"},
+            {"degree":1,"knots":[0,0,1,1],   "type":"Bspline"}
+            ]
+        },
+        "coefs":
+            {
+            "type":"matrix",
+            "coefs":
+                [
+                0, 0,
+                1, 0,
+                2, 0,
+                0, 1,
+                1, 1,
+                2, 1
+                ],
+            "cols":6,
+            "rows":2
+            }
+        },
+    "QuarterAnnulusBSpline" :
+    {
+        "type":"BasisCoefficientMap",
+        "basis":
+        {
+        "type":"TensorBasis",
+        "components":[
+            {"degree":1,"knots":[0,0,1,1],      "type":"Bspline"},
+            {"degree":2,"knots":[0,0,0,1,1,1],  "type":"Bspline"}
+            ]
+        },
+        "coefs":
+            {
+            "type":"matrix",
+            "coefs":
+                [
+                1, 0,
+                2, 0,
+                1, 1,
+                2, 2,
+                0, 1,
+                0, 2
+                ],
+            "cols":6,
+            "rows":2
+            }
+        },
+    "QuarterAnnulusNURBS" :
+        {
+        "type":"RationalMap",
+        "original":
+            {
+            "type":"BasisCoefficientMap",
+            "basis":
+            {
+            "type":"TensorBasis",
+            "components":[
+                {"degree":1,"knots":[0,0,1,1],      "type":"Bspline"},
+                {"degree":2,"knots":[0,0,0,1,1,1],  "type":"Bspline"}
+                ]
+            },
+            "coefs":
+                {
+                "type":"matrix",
+                "coefs":
+                    [
+                    1, 0, 1,
+                    2, 0, 1,
+                    0.7071067811865476, 0.7071067811865476, 0.7071067811865476,
+                    1.414213562373095, 1.414213562373095, 0.7071067811865476,
+                    0, 1, 1,
+                    0, 2, 1
+                    ],
+                "cols":6,
+                "rows":3
+                }
+            }
+        },
+    "BendedTwistedBox" :
+        {
+        "type":"BasisCoefficientMap",
+        "basis":
+            {
+            "type":"TensorBasis",
+            "components":[
+                {"degree":1,"knots":[0,0,1,1],          "type":"Bspline"},
+                {"degree":3,"knots":[0,0,0,0,1,1,1,1],  "type":"Bspline"},
+                {"degree":1,"knots":[0,0,1,1],          "type":"Bspline"}
+                ]
+            },
+        "coefs":
+            {
+            "type":"matrix",
+            "coefs":
+                [
+                1, 0, 0,
+                2, 0, 0,
+                1, 0.5, 0,
+                2, 1.5, 0,
+                0.5, 1, 0.5,
+                1.5, 2, 0.5,
+                0, 1, 2,
+                0, 2, 2,
+                1, 0, 1,
+                2, 0, 1,
+                1, 0.5, 1,
+                2, 1.5, 1,
+                1, 1, 1.5,
+                1.5, 2, 1.5,
+                1, 1, 2,
+                1, 2, 2
+                ],
+            "cols":16,
+            "rows":3
+            }
+        }
+}
+

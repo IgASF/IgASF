@@ -1,0 +1,4 @@
+CXX:= g++
+CXXFLAGS:= -O3 -DNDEBUG -g -fPIC $(INCLUDE_FLAGS) -Wextra -Wall -Werror -std=c++1z -ftemplate-backtrace-limit=0 -pthread
+LIB_EXT:= so
+ECHO_FLAG:= -e

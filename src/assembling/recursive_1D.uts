@@ -1,0 +1,93 @@
+/** This file is part of the IgASF library.
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+#include <iostream>
+
+#include <assembling/recursive_1D.h>
+#include <bases/bspline.h>
+#include <quadrature/per_element.h>
+
+#include <catch.hpp>
+
+const real_t tol=100*std::numeric_limits<real_t>::epsilon();
+
+SCENARIO( "Testing recursive1D", "[1D assembling]" ) {
+
+    GIVEN( "A simple space on one element" ) {
+        Bspline basTst(1,{0,0,1,1});
+        Bspline basTrl(2,{0,0,0,1,1,1});
+
+        ElementQuadrature quad(Rules::Gauss(3), basTst.breaks() );
+
+        WHEN( "computing a mass matrix with map x->x^2" ) {
+
+            BasisValues tst=basTst.evaluate({0}, quad.nodes() );
+            BasisValues trl=basTrl.evaluate({0}, quad.nodes() );
+            quad.applyToValues(tst);
+
+            std::vector<real_t> coefs(quad.size());
+            for (int i=0;i<static_cast<int>(quad.size()); ++i)
+                coefs[i]=2*quad.nodes()(i);
+
+            std::vector<index_t> eles(1,quad.size() );
+            Sparsity spr=bilinearSparsity(tst,trl);
+            std::vector<real_t> result(basTst.size()*basTrl.size(),0);
+
+            assemble1D(tst,trl,0,0,coefs, result, spr, eles);
+
+            THEN( "the result equals the anlytic integration" ) {
+                REQUIRE( abs(result[0]- real_t(1)/real_t(10))  < tol);
+                REQUIRE( abs(result[1]- real_t(2)/real_t(15))  < tol);
+                REQUIRE( abs(result[2]- real_t(1)/real_t(10))  < tol);
+
+                REQUIRE( abs(result[3]- real_t(1)/real_t(15))  < tol);
+                REQUIRE( abs(result[4]- real_t(1)/real_t(5))  < tol);
+                REQUIRE( abs(result[5]- real_t(2)/real_t(5))  < tol);
+            }
+        }
+
+    }
+
+
+    GIVEN( "A simple space on 3 elements" ) {
+        Bspline basTst(1,{0,0,1,2,3,3});
+        Bspline basTrl(2,{0,0,0,1,2,3,3,3});
+
+        ElementQuadrature quad(Rules::Gauss(3), basTst.breaks() );
+
+        WHEN( "computing a mass matrix with map x->x^2" ) {
+
+            BasisValues tst=basTst.evaluate({0}, quad.nodes() );
+            BasisValues trl=basTrl.evaluate({0}, quad.nodes() );
+            quad.applyToValues(tst);
+
+            std::vector<real_t> coefs(quad.size());
+            for (int i=0;i<static_cast<int>(quad.size()); ++i)
+                coefs[i]=2*quad.nodes()(i);
+
+            std::vector<index_t> eles={3,6,9};
+            Sparsity spr=bilinearSparsity(tst,trl);
+            std::vector<real_t> result(spr.nnzs(),0);
+
+            view<const index_t> ele(eles);
+            assemble1D(tst,trl,0,0,coefs, result, spr, ele);
+
+            THEN( "the result equals the anlytic integration" ) {
+                std::vector<real_t> correct=
+                    {
+                    1.0/10.0, 11.0/60.0,   1.0/20.0,       //0,         0
+                    1.0/15.0,  7.0/10.0,  11.0/10.0,  2.0/15.0,      // 0
+                    /* 0,  */  7.0/60.0,  33.0/20.0,  9.0/ 5.0, 13.0/30.0,
+                    /* 0,           0,*/   1.0/ 5.0, 16.0/15.0,  7.0/ 5.0};
+                REQUIRE( (view<real_t>(result).vector()-view<real_t>(correct).vector()).norm()  < tol);
+            }
+        }
+
+    }
+
+
+}
