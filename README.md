@@ -61,4 +61,14 @@
 
 ```
 
-                                                                         
+The code is based on the paper
+
+A. Bressan, S. Takacs. *Sum-factorization techniques in Isogeometric Analysis*.
+Submitted. [arXiv:1809.05471](https://arxiv.org/abs/1809.05471)
+
+The first author has received funding from the European Research Council under
+the European Union's Seventh Framework Programme (FP7/2007-2013) / ERC grant
+agreement 339643. The second author was partially funded by the Austrian Science
+Fund (FWF) under grant NFN S117-03.
+
+
