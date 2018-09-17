@@ -1,4 +1,3 @@
-
 ```
                     _____                ________________                   
                    |_   _|        /\    / ______________/                   
@@ -12,9 +11,30 @@
  -------------------------------------------------------------------------- 
                 Isogeometric-Assembling-by-Sum-Factorization                
  -------------------------------------------------------------------------- 
-                                                                            
- https://github.com/IgASF/IgASF                                             
-                                                                            
+```
+
+This is a small library that assemble the system matrix of Isogeometric Analysis
+discretization of PDEs based on tensor product spline. It implements the algorithms
+described in the research paper
+
+A. Bressan, S. Takacs. *Sum-factorization techniques in Isogeometric Analysis*.
+Submitted. [arXiv:1809.05471](https://arxiv.org/abs/1809.05471)
+
+It comes with some test programs that can assemble the system matrix of scalar
+second order PDEs with constant coefficients.
+
+This work has been possible thanks to the support of the European Research Council under
+the European Union's Seventh Framework Programme (FP7/2007-2013) / ERC grant
+agreement 339643 and of the Austrian Science Fund (FWF) under grant NFN S117-03.
+
+## Compiling
+
+Use the makefile:
+
+
+```                                                                            
+ ...
+ 
  Type                                                                       
                                                                             
    make all               ... to make executables of this library (debug)   
@@ -33,7 +53,10 @@
                                                                             
  to specify the corresponding configuration. If those files are deleted,    
  they will be restored based on the corresponding templates.                
-                                                                            
+```
+## Using the supplied executables
+
+```
  Invoke after 'make all'                                                    
                                                                             
    ./generateTest-debug   ... to create a configuration file for assembling 
@@ -61,14 +84,17 @@
 
 ```
 
-The code is based on the paper
+## Using the library
 
-A. Bressan, S. Takacs. *Sum-factorization techniques in Isogeometric Analysis*.
-Submitted. [arXiv:1809.05471](https://arxiv.org/abs/1809.05471)
+To extend the library to different PDEs ( not second order with constant
+coefficients ) it is necessary to code a description of the PDE in c++.
 
-The first author has received funding from the European Research Council under
-the European Union's Seventh Framework Programme (FP7/2007-2013) / ERC grant
-agreement 339643. The second author was partially funded by the Austrian Science
-Fund (FWF) under grant NFN S117-03.
+The description should be an object that derives from Model and implements
+the initParts method.
+The bilinear form should be decomposed in terms, each involving a single
+pair of partial derivatives of the test and trial functions.
+The initParts method should allocate an array containing the values of
+weight for each derivative pair.
 
+See assembling/model.h and assembling/second_order.h for more details.
 
