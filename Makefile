@@ -26,8 +26,12 @@ export INCLUDE_FLAGS
 export DEPFLAGS
 
 # Create those files if they do not yet exist
-$(shell if [[ ! -e config/debug ]]; then cp config/debug_template config/debug; fi)
-$(shell if [[ ! -e config/release ]]; then cp config/release_template config/release; fi)
+ifeq (,$(wildcard config/debug))
+  $(shell cp config/debug_template config/debug)
+endif
+ifeq (,$(wildcard config/release))
+  $(shell cp config/release_template config/release)
+endif
 
 # Give some defaults
 CXXFLAGS:= -O0 -g -fPIC $(INCLUDE_FLAGS) -Wextra -Wall -Werror -std=c++1z -ftemplate-backtrace-limit=0 -pthread
