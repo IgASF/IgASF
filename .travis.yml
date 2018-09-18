@@ -12,7 +12,7 @@ os: linux
 
 branches:
   only:
-  - stable
+  - master
 
 before_install:
   # C++17
