@@ -8,9 +8,13 @@ sudo: false
 
 os: linux
 
+addons:
+  packages:
+    - g++-6
+
 script:
   - make help
-  - echo "CXX:= g++-7" >> config/debug
+  - echo "CXX:= g++-6" >> config/debug
   - make all
   - make unittests
   
