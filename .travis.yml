@@ -10,6 +10,10 @@ sudo: false
 
 os: linux
 
+branches:
+  only:
+  - stable
+
 before_install:
   # C++17
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
@@ -21,8 +25,7 @@ install:
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
 
 script:
-  - export SHELL=/bin/bash
-  - make help
-  - travis_wait 30 make all
-  - make unittest
+  - SHELL=/bin/bash && make help
+  - SHELL=/bin/bash && travis_wait 30 make all
+  - SHELL=/bin/bash && make unittest
   
