@@ -9,6 +9,8 @@ sudo: false
 os: linux
 
 script:
+  - make help
+  - echo "CXX:= g++-7" >> config/debug
   - make all
   - make unittests
   
