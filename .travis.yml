@@ -26,6 +26,7 @@ install:
 
 script:
   - make help
+  - echo "ECHO_FLAG:=" >> config/dubug
   - travis_wait 30 make all
   - make unittest
   
