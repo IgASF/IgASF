@@ -86,11 +86,12 @@ Use the makefile:
 
 ## Using the library
 
-To extend the library to different PDEs ( not second order with constant
-coefficients ) it is necessary to code a description of the PDE in c++.
+To extend the library to different PDEs (not second order with constant
+coefficients) it is necessary to code a description of the PDE in c++.
 
 The description should be an object that derives from Model and implements
 the initParts method.
+
 The bilinear form should be decomposed in terms, each involving a single
 pair of partial derivatives of the test and trial functions.
 The initParts method should allocate an array containing the values of
