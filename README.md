@@ -13,8 +13,8 @@
  -------------------------------------------------------------------------- 
 ```
 
-This is a small library that assemble the system matrix of Isogeometric Analysis
-discretization of PDEs based on tensor product spline. It implements the algorithms
+This is a small library that assembles the system matrix of an Isogeometric Analysis
+discretization of PDEs based on tensor product splines. It implements the algorithms
 described in the research paper
 
 A. Bressan, S. Takacs. *Sum-factorization techniques in Isogeometric Analysis*.
