@@ -21,6 +21,7 @@ install:
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
 
 script:
+  - export SHELL=/bin/bash
   - make help
   - travis_wait 30 make all
   - make unittest
