@@ -22,6 +22,6 @@ install:
 
 script:
   - make help
-  - travis_wait 30 mvn make all
+  - travis_wait 30 make all
   - make unittest
   
