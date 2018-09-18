@@ -1,0 +1,15 @@
+
+language: cpp
+
+notifications:
+  email: false
+
+sudo: false
+
+os: linux
+
+script:
+  - make all
+  - make unittests
+  
+  
