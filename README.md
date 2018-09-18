@@ -99,3 +99,6 @@ weight for each derivative pair.
 
 See assembling/model.h and assembling/second_order.h for more details.
 
+## Continuous integration
+
+![travis](https://travis-ci.com/IgASF/IgASF.svg?branch=master)
