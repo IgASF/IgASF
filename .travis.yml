@@ -20,10 +20,8 @@ install:
   - sudo apt-get install -qq g++-7
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
 
-install: travis_wait 30 mvn install
-
 script:
   - make help
-  - make all
+  - travis_wait 30 mvn make all
   - make unittest
   
