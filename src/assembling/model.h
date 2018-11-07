@@ -26,6 +26,7 @@ public:
     std::vector<Part> parts;
 public:
     void assemble(const TensorBasis &test, const TensorBasis &trial, const TensorQuadrature  &quad, MMatrix &output) const;
+    void apply   (const TensorBasis &test, const TensorBasis &trial, const TensorQuadrature  &quad, view<const real_t> in_v, view<real_t> out_v) const;
 protected:
     virtual std::vector<Part> initParts(const TensorQuadrature  &) const {return parts;}
     virtual void done     ( ) const {}
@@ -39,9 +40,7 @@ protected:
     TensorBasis::ComponentRequest getTestRequest (int dim, const std::vector<Part> &data)const;
     TensorBasis::ComponentRequest getTrialRequest(int dim, const std::vector<Part> &data)const;
 };
+
 typedef std::unique_ptr<Model> ModelPtr;
 
 void to_json  (Json& j, const Model::Part& p);
-
-
-

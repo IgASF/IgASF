@@ -11,6 +11,7 @@
 
 #include <assembling/model.h>
 #include <assembling/recursive_nD.h>
+#include <assembling/apply_nD.h>
 #include <maps/transform_coefs.h>
 #include <tools/timing.h>
 
@@ -99,6 +100,61 @@ void Model::assemble(const TensorBasis &test, const TensorBasis &trial, const Te
     this->done();
 }
 
+void Model::apply   (const TensorBasis &test, const TensorBasis &trial, const TensorQuadrature  &quad, view<const real_t> in_v, view<real_t> out_v) const
+{
+    int dim = quad.domainDim();
+    
+    // coefficients
+    auto t_start = std::chrono::high_resolution_clock::now();
+    std::vector<Part> data=this->initParts(quad);
+    auto t_end = std::chrono::high_resolution_clock::now();
+    time_eval_coef.fetch_add(
+        std::chrono::duration_cast<std::chrono::microseconds>(t_end-t_start).count());
+    
+    // basis functions
+    t_start = std::chrono::high_resolution_clock::now();
+    auto tsts=test.evaluateComponents (getTestRequest(dim,data),quad.grid());
+    auto trls=trial.evaluateComponents(getTrialRequest(dim,data),quad.grid());
+    quad.applyToValues(tsts);
+    t_end = std::chrono::high_resolution_clock::now();
+    time_eval_bases.fetch_add(
+        std::chrono::duration_cast<std::chrono::microseconds>(t_end-t_start).count());
+    
+    // elements
+    t_start = std::chrono::high_resolution_clock::now();
+    auto elesData=computeElementSplitting(test,trial,quad);
+    std::vector<view<const index_t>>  eles(dim);
+    for (int i=0;i<dim;++i)eles[i]=view<const index_t>(elesData[i]);
+    
+    // init output and tmp
+    OwningView<real_t> tmp(quad.size());
+    out_v.vector().setZero();
+    t_end = std::chrono::high_resolution_clock::now();
+    time_compute_structure.fetch_add(
+        std::chrono::duration_cast<std::chrono::microseconds>(t_end-t_start).count());
+
+    
+    // Computation
+    t_start = std::chrono::high_resolution_clock::now();
+    for (auto &entry: data)
+        {
+        recursiveApply(
+                          view<const BasisValues>(tsts),
+                          view<const BasisValues>(trls),
+                          entry.test,
+                          entry.trial,
+                          entry.coefs,
+                          tmp,
+                          in_v,
+                          out_v
+                          );
+        }
+    t_end = std::chrono::high_resolution_clock::now();
+    time_assemble.fetch_add(
+        std::chrono::duration_cast<std::chrono::microseconds>(t_end-t_start).count());
+    this->done();
+}
+
 std::vector<Sparsity> Model::getBilSparsities(const std::vector<BasisValues> &tsts, const std::vector<BasisValues> &trls)
 {
     int dim=tsts.size();
@@ -178,7 +234,3 @@ void to_json  (Json& j, const Model::Part& p)
     j["trlD"]=p.trial;
     j["vals"]=p.coefs;
 }
-
-
-
-
