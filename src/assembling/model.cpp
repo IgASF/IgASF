@@ -11,7 +11,7 @@
 
 #include <assembling/model.h>
 #include <assembling/recursive_nD.h>
-#include <assembling/apply_nD.h>
+#include <assembling/apply.h>
 #include <maps/transform_coefs.h>
 #include <tools/timing.h>
 
@@ -126,8 +126,31 @@ void Model::apply   (const TensorBasis &test, const TensorBasis &trial, const Te
     std::vector<view<const index_t>>  eles(dim);
     for (int i=0;i<dim;++i)eles[i]=view<const index_t>(elesData[i]);
     
-    // init output and tmp
-    OwningView<real_t> tmp(quad.size());
+    // init output and tmps
+    index_t max_size=0;
+    {
+    index_t size=in_v.size();
+    for (int i=dim-1; i>=0;--i)
+        {
+        size/=trls[i].rows();
+        size*=trls[i].cols();
+        max_size=std::max(max_size, size);
+        }
+    }
+    {
+    index_t size=quad.size();
+    for (int i=dim-1; i>=0;--i)
+        {
+        size/=tsts[i].rows();
+        size*=tsts[i].cols();
+        max_size=std::max(max_size, size);
+        }
+    }
+    
+    OwningView<real_t> tmp(max_size);
+    OwningView<real_t> eval_mem(quad.size());
+    OwningView<real_t> int_mem(out_v.size());
+
     out_v.vector().setZero();
     t_end = std::chrono::high_resolution_clock::now();
     time_compute_structure.fetch_add(
@@ -138,12 +161,14 @@ void Model::apply   (const TensorBasis &test, const TensorBasis &trial, const Te
     t_start = std::chrono::high_resolution_clock::now();
     for (auto &entry: data)
         {
-        recursiveApply(
+        KroneckerApply(
                           view<const BasisValues>(tsts),
                           view<const BasisValues>(trls),
                           entry.test,
                           entry.trial,
                           entry.coefs,
+                          eval_mem,
+                          int_mem,
                           tmp,
                           in_v,
                           out_v

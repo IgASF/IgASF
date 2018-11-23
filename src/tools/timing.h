@@ -21,6 +21,9 @@ extern std::atomic<long> time_assemble;
 extern std::atomic<long> time_macro_setup;
 extern std::atomic<long> time_add_macro;
 
+extern std::atomic<long> time_apply_trial;
+extern std::atomic<long> time_apply_kronecker;
+
 template <class T>
 __attribute__((always_inline)) inline void DoNotOptimize( T &value) {
   asm volatile("" : "+m"(const_cast<T &>(value)));
@@ -38,5 +41,8 @@ enum TIMES
     add_macro,
     real,
     cpu,
+    
+    apply_trial,
+    apply_kronecker,
     count
 };

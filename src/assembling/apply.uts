@@ -1,0 +1,56 @@
+/** This file is part of the IgASF library.
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+#include <iostream>
+
+#include <assembling/second_order.h>
+#include <bases/bspline.h>
+
+#include <catch.hpp>
+
+const real_t tol=100*std::numeric_limits<real_t>::epsilon();
+
+SCENARIO( "Testing apply", "[2D problem]" ) {
+
+    GIVEN( "A second order problem" ) {
+        FMatrix A(2,2),b(2,1); real_t C=1;
+        A<<1,2,3,4;
+        b<<5,6;
+        SecondOrderModel model(EqCoef(2, A,b,C));
+
+        std::vector<BasisPtr> tst_comp;
+        tst_comp.push_back( BasisPtr(new Bspline(1,{0,0,1,2,2})));
+        tst_comp.push_back( BasisPtr(new Bspline(2,{0,0,0,1,1,2,2,2})));
+
+        std::vector<BasisPtr> trl_comp;
+        trl_comp.push_back( BasisPtr(new Bspline(1,{0,0,1,2,2})));
+        trl_comp.push_back( BasisPtr(new Bspline(1,{0,0,1,2,2})));
+
+        TensorBasis test(tst_comp);
+        TensorBasis trial(trl_comp);
+        QuadPtr quad=getRecommendedQuadrature(test, trial);
+
+        MMatrix mat;
+        model.assemble(test,trial,*static_cast<TensorQuadrature*>(quad.get()), mat);
+
+        WHEN( "applying to a vector" ) {
+
+            FMatrix vec(trial.size(),1);
+            vec<<1,-1,2,-2,3,-3,4,-4,5;
+            FMatrix resM=mat.matrix()*vec;
+            FMatrix resA(test.size(),1);
+            resA.setZero();
+            model.apply(test,trial,*static_cast<TensorQuadrature*>(quad.get()),vec, resA);
+
+            THEN( "the result equals the assemble + multiplication" ) {
+                REQUIRE( (resA- resM).norm()  < tol);
+            }
+        }
+
+    }
+
+}
