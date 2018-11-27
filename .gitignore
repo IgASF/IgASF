@@ -34,6 +34,10 @@
 # IgASF
 *-debug
 *-release
+.gitignore
 build/*
 config/debug
 config/release
+contents.xcworkspacedata
+IDEWorkspaceChecks.plist
+UserInterfaceState.xcuserstate
