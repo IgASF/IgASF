@@ -19,7 +19,7 @@ described in the research paper
 
 A. Bressan, S. Takacs. *Sum-factorization techniques in Isogeometric Analysis*.
 Computer Methods in Applied Mechanics and Engineering, vol. 352, p. 437 - 460,
-2019. [arXiv:1809.05471](https://arxiv.org/abs/1809.05471)
+2019. [journal version](https://doi.org/10.1016/j.cma.2019.04.031) or [arXiv:1809.05471](https://arxiv.org/abs/1809.05471)
 
 It comes with some test programs that can assemble the system matrix of scalar
 second order PDEs with constant coefficients.
